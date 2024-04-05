@@ -1,11 +1,4 @@
-import {DraggableColumnsMixin} from '../mixins/DraggableColumnsMixin.js';
-import {SortableColumnsMixin} from '../mixins/SortableColumnsMixin.js';
-
-function applyMixins(...mixins) {
-	return mixins.reduce((base, mixin) => mixin(base), Object);
-}
-
-export default class Table extends applyMixins(DraggableColumnsMixin, SortableColumnsMixin) {
+export default class Table {
 	#tableElement = document.createElement('table');
 	#data;
 	#dataForRender;
@@ -16,7 +9,6 @@ export default class Table extends applyMixins(DraggableColumnsMixin, SortableCo
 	};
 
 	constructor(data, columns, settings = {}) {
-		super();
 		Object.assign(this.#settings, settings);
 		this.#data          = data;
 		this.#dataForRender = data;
