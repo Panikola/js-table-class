@@ -1,21 +1,3 @@
-# to start
-
-Run the following commands
-
-Install dependencies once:
-```
-npm install
-```
-Start dev server
-```
-npm run dev
-```
-
-Build a bundle (generated in the dist folder):
-```
-npm run dist
-```
-
 # тестовое задание
 
 1. Создать компонент для отображения набора однотипных данных в табличном виде
