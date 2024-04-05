@@ -40,4 +40,4 @@ async function loadDataAndInitializeUI() {
     }
 }
 
-await loadDataAndInitializeUI();
+loadDataAndInitializeUI().then(r => console.log('UI initialized'));
