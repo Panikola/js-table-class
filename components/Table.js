@@ -1,70 +1,57 @@
-export default class Table {
-	#tableElement = document.createElement('table');
-	#data;
-	#dataForRender;
-	#columns;
-	#settings = {
-		sortColumn: 'id',
-		filterDebounce: 300
-	};
-
-	constructor(data, columns, settings = {}) {
-		Object.assign(this.#settings, settings);
-		this.#data          = data;
-		this.#dataForRender = data;
-		this.#columns       = columns;
-
-		this.#initialize();
-	}
-
-	#initialize() {
-        this.#highlight();
-        this.#sortData();
-        this.#render();
+class Table {
+    constructor(container, options = {}) {
+        this.container = container; // DOM элемент, в который будет рендериться таблица
+        this.options = options;
+        this.columns = []; // Массив для хранения столбцов
+        this.data = []; // Данные для отображения в таблице
     }
 
-	#render() {
-        this.#tableElement.innerHTML = `<thead><tr>${this.#columns.map(header => `<th>${header}</th>`).join('')}</tr></thead>`;
-        const rowsHtml = this.#dataForRender.map(item => `<tr>${this.#columns.map(key => `<td>${item[key]}</td>`).join('')}</tr>`).join('');
-        this.#tableElement.innerHTML += `<tbody>${rowsHtml}</tbody>`;
-	}
+    addColumn(column) {
+		column.element = null; // Инициализируем здесь, добавим элемент позже
+        this.columns.push(column);
+    }
 
-	#sortData() {
-		this.#dataForRender.sort((a, b) =>
-			String(a[this.#settings.sortColumn]).localeCompare(String(b[this.#settings.sortColumn])));
-	}
+    setData(data) {
+        this.data = data;
+    }
 
-	#highlight() {
-		this.#tableElement.addEventListener('click', e => {
-            if (e.target.tagName === 'TD') {
-                e.target.parentNode.classList.toggle('highlight');
-            }
+	addPlugin(plugin) {
+        plugin.apply(this);
+    }
+
+    render() {
+        const tableElement = document.createElement('table');
+        tableElement.className = 'custom-table'; // Пример класса для стилизации
+
+       // Создание и добавление заголовков таблицы
+		const thead = document.createElement('thead');
+		const headerRow = document.createElement('tr');
+		this.columns.forEach(column => {
+			const headerCell = document.createElement('th');
+			headerCell.textContent = column.title;
+			column.element = headerCell; // Сохраняем ссылку на DOM-элемент заголовка столбца
+			headerRow.appendChild(headerCell);
+		});
+		thead.appendChild(headerRow);
+		tableElement.appendChild(thead);
+
+        // Создание и добавление строк данных
+        const tbody = document.createElement('tbody');
+        this.data.forEach(rowData => {
+            const row = document.createElement('tr');
+            this.columns.forEach(column => {
+                const cell = document.createElement('td');
+                cell.textContent = rowData[column.field];
+                row.appendChild(cell);
+            });
+            tbody.appendChild(row);
         });
-	}
-
-	sort(columnName) {
-		this.#settings.sortColumn = columnName;
-		this.#sortData();
-		this.#render();
-	}
-
-	filters(searchString) {
-        this.#dataForRender = searchString ? this.#filterData(searchString) : [...this.#data];
-        this.#render();
+        tableElement.appendChild(tbody);
+        // Очистка контейнера и добавление сгенерированной таблицы
+        this.container.innerHTML = '';
+        this.container.appendChild(tableElement);
     }
-
-    #filterData(searchString) {
-        const filterValue = searchString.toLowerCase().trim();
-        const startsWith = filterValue.startsWith('^');
-        const adjustedFilterValue = startsWith ? filterValue.slice(1) : filterValue;
-
-        return this.#data.filter(item => this.#columns.some(key => {
-            const value = item[key]?.toLowerCase();
-            return value ? (startsWith ? value.startsWith(adjustedFilterValue) : value.includes(adjustedFilterValue)) : false;
-        }));
-    }
-
-	get element() {
-		return this.#tableElement;
-	}
 }
+
+// Экспорт класса для использования в других частях приложения
+export default Table;
