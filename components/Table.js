@@ -49,6 +49,7 @@ class Table {
 				cell.textContent = rowData[column.name];
 				row.appendChild(cell);
 			});
+			rowData.element = row; // Сохраняем ссылку на DOM-элемент строки
 			tbody.appendChild(row);
 		});
 		tableElement.appendChild(tbody);

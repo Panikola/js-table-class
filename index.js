@@ -1,6 +1,7 @@
 import './styles/style.css';
-import FilterableTablePlugin from './components/plugins/FilterableTablePlugin.js';
 import Input from './components/Input.js';
+import FilterableTablePlugin from './components/plugins/FilterableTablePlugin.js';
+import SelectRowTablePlugin from './components/plugins/SelectRowTablePlugin.js';
 import SortableTablePlugin from './components/plugins/SortableTablePlugin.js';
 import Table from './components/Table.js';
 import fetchJson from './helpers/fetchData.js';
@@ -9,8 +10,8 @@ import mergeData from './helpers/mergeData.js';
 const CARS_DATA_URL = './data/cars.json';
 const DEVICES_DATA_URL = './data/devices.json';
 const TABLE_COLUMNS = ['RegNumber', 'Device', 'VIN', 'Model', 'InventoryNumber', 'ReleaseDate'];
-const TABLE_CONTAINER = '#tableContainer'
-const FILTER_CONTAINER = '#inputContainer'
+const TABLE_CONTAINER = '#tableContainer';
+const FILTER_CONTAINER = '#inputContainer';
 
 async function initializeTable() {
 	try {
@@ -43,6 +44,7 @@ async function initializeTable() {
 		// Добавление плагинов к таблице
 		table.addPlugin(new SortableTablePlugin(table, TABLE_COLUMNS[0]));
 		table.addPlugin(new FilterableTablePlugin(table, input.element, input.eventName));
+		table.addPlugin(new SelectRowTablePlugin(table));
 
 
 	}
