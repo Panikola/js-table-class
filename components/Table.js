@@ -1,70 +1,65 @@
-export default class Table {
-	#tableElement = document.createElement('table');
-	#data;
-	#dataForRender;
-	#columns;
-	#settings = {
-		sortColumn: 'id',
-		filterDebounce: 300
-	};
+class Table {
+	#plugins = [];
+	#settings = {};
+	columns = [];
+	#container = null;
+	data = [];
 
-	constructor(data, columns, settings = {}) {
+	constructor(container, settings = {}) {
+		this.#container = container; // DOM элемент, в который будет рендериться таблица
 		Object.assign(this.#settings, settings);
-		this.#data          = data;
-		this.#dataForRender = data;
-		this.#columns       = columns;
-
-		this.#initialize();
 	}
 
-	#initialize() {
-        this.#highlight();
-        this.#sortData();
-        this.#render();
-    }
-
-	#render() {
-        this.#tableElement.innerHTML = `<thead><tr>${this.#columns.map(header => `<th>${header}</th>`).join('')}</tr></thead>`;
-        const rowsHtml = this.#dataForRender.map(item => `<tr>${this.#columns.map(key => `<td>${item[key]}</td>`).join('')}</tr>`).join('');
-        this.#tableElement.innerHTML += `<tbody>${rowsHtml}</tbody>`;
+	addColumn(column) {
+		this.columns.push(column);
 	}
 
-	#sortData() {
-		this.#dataForRender.sort((a, b) =>
-			String(a[this.#settings.sortColumn]).localeCompare(String(b[this.#settings.sortColumn])));
+	setData(data) {
+		this.data = data;
+		this.render();
 	}
 
-	#highlight() {
-		this.#tableElement.addEventListener('click', e => {
-            if (e.target.tagName === 'TD') {
-                e.target.parentNode.classList.toggle('highlight');
-            }
-        });
+	addPlugin(plugin) {
+		plugin.init();
+		this.#plugins.push(plugin);
 	}
 
-	sort(columnName) {
-		this.#settings.sortColumn = columnName;
-		this.#sortData();
-		this.#render();
-	}
+	render() {
+		const tableElement = document.createElement('table');
+		tableElement.className = 'custom-table'; // Пример класса для стилизации
 
-	filters(searchString) {
-        this.#dataForRender = searchString ? this.#filterData(searchString) : [...this.#data];
-        this.#render();
-    }
+		// Создание и добавление заголовков таблицы
+		const thead = document.createElement('thead');
+		const headerRow = document.createElement('tr');
+		this.columns.forEach(column => {
+			const headerCell = document.createElement('th');
+			headerCell.textContent = column.title;
+			column.element = headerCell; // Сохраняем ссылку на DOM-элемент заголовка столбца
+			headerRow.appendChild(headerCell);
+		});
+		thead.appendChild(headerRow);
+		tableElement.appendChild(thead);
 
-    #filterData(searchString) {
-        const filterValue = searchString.toLowerCase().trim();
-        const startsWith = filterValue.startsWith('^');
-        const adjustedFilterValue = startsWith ? filterValue.slice(1) : filterValue;
+		// Создание и добавление строк данных
+		const tbody = document.createElement('tbody');
+		this.data.forEach(rowData => {
+			const row = document.createElement('tr');
+			this.columns.forEach(column => {
+				const cell = document.createElement('td');
+				cell.textContent = rowData[column.title];
+				row.appendChild(cell);
+			});
+			tbody.appendChild(row);
+		});
+		tableElement.appendChild(tbody);
 
-        return this.#data.filter(item => this.#columns.some(key => {
-            const value = item[key]?.toLowerCase();
-            return value ? (startsWith ? value.startsWith(adjustedFilterValue) : value.includes(adjustedFilterValue)) : false;
-        }));
-    }
+		// Очистка контейнера и добавление сгенерированной таблицы
+		this.#container.innerHTML = '';
+		this.#container.appendChild(tableElement);
 
-	get element() {
-		return this.#tableElement;
+		// Пересоздание слушателей событий плагинов
+		this.#plugins.forEach(plugin => plugin.init());
 	}
 }
+
+export default Table;
