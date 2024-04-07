@@ -4,8 +4,10 @@
     font-weight: 400;
 
     color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
     background-color: #242424;
+
+    --text-color: rgba(255, 255, 255, 0.87);
+    --main-bg-color: #459B48FF;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -24,16 +26,24 @@ th, td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    left: 0;
 }
 
 th {
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--main-bg-color);
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+th.sorted {
+    background-color: #83E087FF;
 }
 
 .highlight {
     background-color: darkgray;
 }
+
+
 
 @media (prefers-color-scheme: light) {
     :root {
