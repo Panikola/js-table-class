@@ -26,7 +26,7 @@ class SortableTablePlugin extends TablePlugin {
 					this.#isAscending = true;
 				}
 
-				this.#applySort(column.title);
+				this.#applySort(column);
 			});
 		});
 	}

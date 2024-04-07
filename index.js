@@ -32,10 +32,8 @@ async function initializeTable() {
 
 		// Инициализация таблицы
 		const tableContainer = document.querySelector(TABLE_CONTAINER);
-		const table = new Table(tableContainer);
-		TABLE_COLUMNS.forEach(column => {
-			table.addColumn({title: column});
-		});
+		const table = new Table(tableContainer, TABLE_COLUMNS);
+
 		table.setData(mergedData);
 
 		// Инициализация инпута для фильтрации

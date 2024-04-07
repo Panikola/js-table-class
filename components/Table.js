@@ -1,17 +1,14 @@
 class Table {
 	#plugins = [];
 	#settings = {};
-	columns = [];
 	#container = null;
+	columns = [];
 	data = [];
 
-	constructor(container, settings = {}) {
-		this.#container = container; // DOM элемент, в который будет рендериться таблица
+	constructor(container, columns, settings = {}) {
+		this.#container = container;
+		this.columns = columns;
 		Object.assign(this.#settings, settings);
-	}
-
-	addColumn(column) {
-		this.columns.push(column);
 	}
 
 	setData(data) {
@@ -33,7 +30,7 @@ class Table {
 		const headerRow = document.createElement('tr');
 		this.columns.forEach(column => {
 			const headerCell = document.createElement('th');
-			headerCell.textContent = column.title;
+			headerCell.textContent = column;
 			column.element = headerCell; // Сохраняем ссылку на DOM-элемент заголовка столбца
 			headerRow.appendChild(headerCell);
 		});
@@ -46,7 +43,7 @@ class Table {
 			const row = document.createElement('tr');
 			this.columns.forEach(column => {
 				const cell = document.createElement('td');
-				cell.textContent = rowData[column.title];
+				cell.textContent = rowData[column];
 				row.appendChild(cell);
 			});
 			tbody.appendChild(row);
