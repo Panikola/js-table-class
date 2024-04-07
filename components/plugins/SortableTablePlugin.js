@@ -40,7 +40,7 @@ class SortableTablePlugin extends TablePlugin {
 	#applySort(column) {
 		const sortedData = this.#sortData(
 			this.table.data,
-			column
+			column.name
 		);
 		this.setTableData(sortedData);
 	}

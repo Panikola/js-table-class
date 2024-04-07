@@ -7,7 +7,10 @@ class Table {
 
 	constructor(container, columns, settings = {}) {
 		this.#container = container;
-		this.columns = columns;
+		this.columns = columns.map(column => ({
+			name: column,
+			element: null
+		}));
 		Object.assign(this.#settings, settings);
 	}
 
@@ -30,20 +33,20 @@ class Table {
 		const headerRow = document.createElement('tr');
 		this.columns.forEach(column => {
 			const headerCell = document.createElement('th');
-			headerCell.textContent = column;
+			headerCell.textContent = column.name;
 			column.element = headerCell; // Сохраняем ссылку на DOM-элемент заголовка столбца
 			headerRow.appendChild(headerCell);
 		});
 		thead.appendChild(headerRow);
 		tableElement.appendChild(thead);
 
-		// Создание и добавление строк данных
+		// Создание и добавление строк таблицы
 		const tbody = document.createElement('tbody');
 		this.data.forEach(rowData => {
 			const row = document.createElement('tr');
 			this.columns.forEach(column => {
 				const cell = document.createElement('td');
-				cell.textContent = rowData[column];
+				cell.textContent = rowData[column.name];
 				row.appendChild(cell);
 			});
 			tbody.appendChild(row);
